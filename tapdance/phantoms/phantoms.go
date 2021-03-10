@@ -74,11 +74,26 @@ func V6Only(obj []*net.IPNet) ([]*net.IPNet, error) {
 	var out []*net.IPNet = []*net.IPNet{}
 
 	for _, _net := range obj {
-		if ipv6net := _net.IP.To16(); ipv6net != nil {
+		if isIPv6(_net){
 			out = append(out, _net)
 		}
 	}
+	fmt.Println(out)
 	return out, nil
+}
+
+func isIPv6(subnet *net.IPNet) (bool){
+	if ipv6net := subnet.IP.To16(); ipv6net != nil {
+		for i := 0; i < len(ipv6net.String()); i++ {
+			switch ipv6net.String()[i] {
+			case '.':
+			        return false
+			case ':':
+			        return true
+			}
+		}
+	}
+	return false
 }
 
 func parseSubnets(phantomSubnets []string) ([]*net.IPNet, error) {
